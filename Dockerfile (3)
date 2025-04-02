@@ -1,0 +1,28 @@
+
+# Final Dockerfile for Render deployment
+FROM python:3.10-slim
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y tesseract-ocr poppler-utils libgl1-mesa-glx && \
+    apt-get clean
+
+# Create working directory
+WORKDIR /app
+
+# Copy all app files
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose Streamlit port
+EXPOSE 8501
+
+# Set Streamlit to run without browser or interactive prompts
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_SERVER_PORT=8501
+ENV STREAMLIT_SERVER_ENABLECORS=false
+
+# Run the app
+CMD ["streamlit", "run", "ui/app.py"]
